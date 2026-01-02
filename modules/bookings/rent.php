@@ -20,8 +20,9 @@ if (!isset($_SESSION['user'])) {
 
 // Fetch user ID for booking
 $user_email = $_SESSION['user']['email'];
-$user_res = $conn->query("SELECT id FROM users WHERE email='$user_email'");
-$user_id = $user_res->fetch_assoc()['id'];
+$stmt = $conn->prepare("SELECT id FROM users WHERE email=?");
+$stmt->execute([$user_email]);
+$user_id = $stmt->fetch(PDO::FETCH_COLUMN);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $vehicle_id = $_POST['vehicle_id']; // Hidden field
@@ -36,34 +37,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $total_price = $days * $price_per_day;
 
     // Check Availability
-    $check_sql = "SELECT * FROM bookings 
-                  WHERE vehicle_id = ? 
-                  AND status != 'cancelled' 
-                  AND ((start_date <= ? AND end_date >= ?) OR (start_date <= ? AND end_date >= ?))";
-    $stmt = $conn->prepare($check_sql);
-    $stmt->bind_param("issss", $vehicle_id, $end_date, $start_date, $start_date, $end_date);
-    $stmt->execute();
-    $result = $stmt->get_result();
+    try {
+        $check_sql = "SELECT 1 FROM bookings 
+                      WHERE vehicle_id = ? 
+                      AND status != 'cancelled' 
+                      AND ((start_date <= ? AND end_date >= ?) OR (start_date <= ? AND end_date >= ?))";
+        $stmt = $conn->prepare($check_sql);
+        $stmt->execute([$vehicle_id, $end_date, $start_date, $start_date, $end_date]);
 
-    if ($result->num_rows > 0) {
-        $message = "Sorry, this vehicle is not available for the selected dates.";
-        $messageType = "error";
-    } else {
-        // Create Booking
-        $ins_sql = "INSERT INTO bookings (user_id, vehicle_id, start_date, end_date, total_price, status) VALUES (?, ?, ?, ?, ?, 'pending')";
-        $stmt2 = $conn->prepare($ins_sql);
-        $stmt2->bind_param("iissd", $user_id, $vehicle_id, $start_date, $end_date, $total_price);
-        
-        if ($stmt2->execute()) {
-            $message = "Booking successful! Your request is pending approval.";
-            $messageType = "success";
-        } else {
-            $message = "Error creating booking. Please try again.";
+        if ($stmt->fetch()) {
+            $message = "Sorry, this vehicle is not available for the selected dates.";
             $messageType = "error";
+        } else {
+            // Create Booking
+            $ins_sql = "INSERT INTO bookings (user_id, vehicle_id, start_date, end_date, total_price, status) VALUES (?, ?, ?, ?, ?, 'pending')";
+            $stmt2 = $conn->prepare($ins_sql);
+            
+            if ($stmt2->execute([$user_id, $vehicle_id, $start_date, $end_date, $total_price])) {
+                $message = "Booking successful! Your request is pending approval.";
+                $messageType = "success";
+            } else {
+                $message = "Error creating booking. Please try again.";
+                $messageType = "error";
+            }
         }
-        $stmt2->close();
+    } catch (PDOException $e) {
+        $message = "Database Error: " . $e->getMessage();
+        $messageType = "error";
     }
-    $stmt->close();
 }
 
 $vehicle_id = isset($_GET['id']) ? $_GET['id'] : 0;
@@ -90,21 +91,36 @@ $vehicle_id = isset($_GET['id']) ? $_GET['id'] : 0;
             <input type="hidden" name="vehicle_id" id="vehicle_id" value="<?php echo $vehicle_id; ?>">
             <input type="hidden" name="price_per_day" id="price_per_day" value="">
             
-            <input id="search-box" type="text" placeholder="Select Location (Mock)" readonly>
-            <input type="date" name="pickup_date" id="pickup-date" placeholder="Pick-up Date" required min="<?php echo date('Y-m-d'); ?>">
-            <input type="date" name="return_date" id="return-date" placeholder="Return Date" required min="<?php echo date('Y-m-d'); ?>">
+            <div class="form-group">
+                <label>Pickup Location</label>
+                <input id="search-box" type="text" placeholder="Select Location (Mock)" readonly>
+            </div>
             
-            <div class="form-group">
-                <label for="name">Name</label>
-                <input type="text" id="name" name="name" value="<?php echo htmlspecialchars($_SESSION['user']['name']); ?>" readonly>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="pickup-date">Pick-up Date</label>
+                    <input type="date" name="pickup_date" id="pickup-date" required min="<?php echo date('Y-m-d'); ?>">
+                </div>
+                <div class="form-group">
+                    <label for="return-date">Return Date</label>
+                    <input type="date" name="return_date" id="return-date" required min="<?php echo date('Y-m-d'); ?>">
+                </div>
             </div>
-            <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($_SESSION['user']['email']); ?>" readonly>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="name">Name</label>
+                    <input type="text" id="name" name="name" value="<?php echo htmlspecialchars($_SESSION['user']['name']); ?>" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($_SESSION['user']['email']); ?>" readonly>
+                </div>
             </div>
+
             <div class="form-group">
                 <label for="phone">Phone Number</label>
-                <input type="tel" id="phone" name="phone" required>
+                <input type="tel" id="phone" name="phone" placeholder="Enter your mobile number" required>
             </div>
             <button type="submit">Confirm & Book</button>
         </form>

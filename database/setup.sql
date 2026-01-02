@@ -4,9 +4,14 @@
 CREATE DATABASE IF NOT EXISTS ride_ease;
 USE ride_ease;
 
--- Create App User
+-- Create App User for localhost
 CREATE USER IF NOT EXISTS 'app_user'@'localhost' IDENTIFIED BY 'AppUserPassword@123';
 GRANT ALL PRIVILEGES ON ride_ease.* TO 'app_user'@'localhost';
+
+-- Create App User for 127.0.0.1 (TCP/IP connection)
+CREATE USER IF NOT EXISTS 'app_user'@'127.0.0.1' IDENTIFIED BY 'AppUserPassword@123';
+GRANT ALL PRIVILEGES ON ride_ease.* TO 'app_user'@'127.0.0.1';
+
 FLUSH PRIVILEGES;
 
 -- 1. Users Table

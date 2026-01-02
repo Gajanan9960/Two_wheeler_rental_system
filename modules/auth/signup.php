@@ -13,34 +13,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif (empty($username) || empty($password)) {
         $error = "All fields are required.";
     } else {
-        // Check if email exists
-        $check = $conn->prepare("SELECT email FROM users WHERE email = ?");
-        $check->bind_param("s", $email);
-        $check->execute();
-        $check->store_result();
-        
-        if ($check->num_rows > 0) {
-            $error = "Email already registered.";
-        } else {
-            $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-            $sql = "INSERT INTO users (username, email, password) VALUES (?, ?, ?)";
-            $stmt = $conn->prepare($sql);
-            if ($stmt) {
-                $stmt->bind_param("sss", $username, $email, $hashedPassword);
-                if ($stmt->execute()) {
+        try {
+            // Check if email exists
+            $check = $conn->prepare("SELECT email FROM users WHERE email = ?");
+            $check->execute([$email]);
+            
+            if ($check->fetch()) {
+                $error = "Email already registered.";
+            } else {
+                $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+                $sql = "INSERT INTO users (username, email, password) VALUES (?, ?, ?)";
+                $stmt = $conn->prepare($sql);
+                if ($stmt->execute([$username, $email, $hashedPassword])) {
                     header("Location: login.php");
                     exit();
                 } else {
                     $error = "Registration failed.";
                 }
-                $stmt->close();
-            } else {
-                $error = "Database error.";
             }
+        } catch (PDOException $e) {
+            $error = "Database error: " . $e->getMessage();
         }
-        $check->close();
     }
-    $conn->close();
 }
 ?>
 <!DOCTYPE html>

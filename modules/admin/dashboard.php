@@ -20,21 +20,21 @@ include '../../includes/header.php';
 // Fetch Basic Stats
 $stats = [];
 // Total Users
-$res = $conn->query("SELECT COUNT(*) as count FROM users WHERE role='user'");
-$stats['users'] = $res->fetch_assoc()['count'];
+// Total Users
+$res = $conn->query("SELECT COUNT(*) FROM users WHERE role='user'");
+$stats['users'] = $res->fetchColumn();
 
 // Total Vehicles
-$res = $conn->query("SELECT COUNT(*) as count FROM vehicles");
-$stats['vehicles'] = $res->fetch_assoc()['count'];
+$res = $conn->query("SELECT COUNT(*) FROM vehicles");
+$stats['vehicles'] = $res->fetchColumn();
 
 // Total Bookings
-$res = $conn->query("SELECT COUNT(*) as count FROM bookings");
-$stats['bookings'] = $res->fetch_assoc()['count'];
+$res = $conn->query("SELECT COUNT(*) FROM bookings");
+$stats['bookings'] = $res->fetchColumn();
 
 // Total Revenue
-$res = $conn->query("SELECT SUM(total_price) as total FROM bookings WHERE status='completed' OR status='confirmed'");
-$row = $res->fetch_assoc();
-$stats['revenue'] = $row['total'] ?? 0;
+$res = $conn->query("SELECT SUM(total_price) FROM bookings WHERE status='completed' OR status='confirmed'");
+$stats['revenue'] = $res->fetchColumn() ?: 0;
 ?>
 
 <div class="content-container" style="padding: 40px;">

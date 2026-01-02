@@ -1,23 +1,27 @@
 <?php
 $requirements = [
-    'php_version' => '7.4.0',
-    'extensions' => ['mysqli', 'session', 'json']
+    'php' => '7.4.0',
+    'extensions' => ['pdo', 'pdo_sqlite', 'session', 'json'],
+    'write_permissions' => [
+        __DIR__ . '/database',
+        __DIR__ . '/uploads' // If you have uploads
+    ]
 ];
 
 $errors = [];
 $warnings = [];
 
-// Check PHP Version
-if (version_compare(PHP_VERSION, $requirements['php_version'], '<')) {
-    $errors[] = "PHP version " . $requirements['php_version'] . " or higher is required. Current version: " . PHP_VERSION;
+// 1. Check PHP Version
+if (version_compare(phpversion(), $requirements['php'], '<')) {
+    $errors[] = "PHP version " . $requirements['php'] . " or higher is required. Current version: " . phpversion();
 }
 
-// Check Extensions
+// 2. Check Extensions
 foreach ($requirements['extensions'] as $ext) {
     if (!extension_loaded($ext)) {
-        $errors[] = "Extension '$ext' is required but not loaded.";
-        if ($ext === 'mysqli') {
-            $warnings[] = "On Windows (XAMPP), make sure 'extension=mysqli' is uncommented in php.ini.";
+        $errors[] = "PHP Extension '$ext' is missing.";
+        if ($ext === 'pdo_sqlite') {
+            $warnings[] = "On Windows (XAMPP), make sure 'extension=pdo_sqlite' is uncommented in php.ini.";
         }
     }
 }
@@ -27,18 +31,22 @@ $config_file = __DIR__ . '/config/db.php';
 if (!file_exists($config_file)) {
     $errors[] = "Configuration file 'config/db.php' not found.";
 } else {
-    // Try to include and check connection 
+    // 3. Check Database Connection
     // We suppress output to avoid header issues if this script is included elsewhere
     ob_start();
-    include $config_file;
-    ob_end_clean();
-    
-    if (isset($conn) && $conn->connect_error) {
-        $errors[] = "Database connection failed: " . $conn->connect_error;
-        $warnings[] = "For XAMPP on Windows, the default user is usually 'root' with NO password. Update config/db.php if needed.";
-    } elseif (!isset($conn)) {
-        $warnings[] = "Could not verify database connection variable \$conn.";
+    try {
+        include $config_file; // This file should define $conn as a PDO object
+        // Test a query to ensure the connection is active
+        if (isset($conn) && $conn instanceof PDO) {
+            $conn->query("SELECT 1");
+        } else {
+            $errors[] = "Database connection variable \$conn not found or not a PDO object after including 'config/db.php'.";
+        }
+    } catch (Exception $e) {
+        $errors[] = "Database Connection Failed: " . $e->getMessage();
+        $warnings[] = "Ensure 'database/ride_ease.db' is writable and the path in config/db.php is correct.";
     }
+    ob_end_clean();
 }
 
 // Output

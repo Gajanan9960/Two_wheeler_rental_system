@@ -9,28 +9,30 @@ if (!isset($_SESSION['user'])) {
 }
 
 $user_email = $_SESSION['user']['email'];
-$user_id_res = $conn->query("SELECT id FROM users WHERE email='$user_email'");
-$user_id = $user_id_res->fetch_assoc()['id'];
+$stmt = $conn->prepare("SELECT id FROM users WHERE email=?");
+$stmt->execute([$user_email]);
+$user_id = $stmt->fetch(PDO::FETCH_COLUMN);
 
 $page_title = "My Dashboard - Ride-ease";
 $base_path = "../../";
+$extra_css = '<link rel="stylesheet" href="../../assets/css/dashboard.css">';
 include '../../includes/header.php';
 ?>
 
-<div class="content-container" style="padding: 40px;">
+<div class="content-container">
     <h1>My Dashboard</h1>
     <p>Welcome, <?php echo htmlspecialchars($_SESSION['user']['name']); ?>!</p>
 
     <div style="margin-top: 30px;">
         <h2>My Rides</h2>
-        <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+        <table>
             <thead>
-                <tr style="background: #f4f4f4; text-align: left;">
-                    <th style="padding: 10px; border: 1px solid #ddd;">Booking ID</th>
-                    <th style="padding: 10px; border: 1px solid #ddd;">Vehicle</th>
-                    <th style="padding: 10px; border: 1px solid #ddd;">Dates</th>
-                    <th style="padding: 10px; border: 1px solid #ddd;">Total Cost</th>
-                    <th style="padding: 10px; border: 1px solid #ddd;">Status</th>
+                <tr>
+                    <th>Booking ID</th>
+                    <th>Vehicle</th>
+                    <th>Dates</th>
+                    <th>Total Cost</th>
+                    <th>Status</th>
                 </tr>
             </thead>
             <tbody>
@@ -38,27 +40,31 @@ include '../../includes/header.php';
                 $sql = "SELECT b.*, v.name as vehicle_name 
                         FROM bookings b 
                         JOIN vehicles v ON b.vehicle_id = v.id 
-                        WHERE b.user_id = $user_id
+                        WHERE b.user_id = ?
                         ORDER BY b.created_at DESC";
-                $result = $conn->query($sql);
                 
-                if ($result->num_rows > 0) {
-                    while ($row = $result->fetch_assoc()) {
-                        $statusColor = 'orange';
-                        if($row['status'] == 'confirmed') $statusColor = 'green';
-                        if($row['status'] == 'cancelled') $statusColor = 'red';
-                        if($row['status'] == 'completed') $statusColor = 'blue';
-
-                        echo "<tr>";
-                        echo "<td style='padding: 10px; border: 1px solid #ddd;'>#{$row['id']}</td>";
-                        echo "<td style='padding: 10px; border: 1px solid #ddd;'>{$row['vehicle_name']}</td>";
-                        echo "<td style='padding: 10px; border: 1px solid #ddd;'>{$row['start_date']} to {$row['end_date']}</td>";
-                        echo "<td style='padding: 10px; border: 1px solid #ddd;'>₹{$row['total_price']}</td>";
-                        echo "<td style='padding: 10px; border: 1px solid #ddd; color: $statusColor; font-weight: bold;'>".ucfirst($row['status'])."</td>";
-                        echo "</tr>";
+                try {
+                    $stmt = $conn->prepare($sql);
+                    $stmt->execute([$user_id]);
+                    $bookings = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                    
+                    if (count($bookings) > 0) {
+                        foreach ($bookings as $row) {
+                            $statusClass = 'status-' . strtolower($row['status']);
+                            
+                            echo "<tr>";
+                            echo "<td>#{$row['id']}</td>";
+                            echo "<td>{$row['vehicle_name']}</td>";
+                            echo "<td>{$row['start_date']} to {$row['end_date']}</td>";
+                            echo "<td>₹{$row['total_price']}</td>";
+                            echo "<td class='$statusClass'>".ucfirst($row['status'])."</td>";
+                            echo "</tr>";
+                        }
+                    } else {
+                        echo "<tr><td colspan='5' style='text-align: center; padding: 30px;'>You haven't booked any rides yet. <a href='../../services.php' style='color: #fe5b3d; font-weight: bold;'>Book now!</a></td></tr>";
                     }
-                } else {
-                    echo "<tr><td colspan='5' style='padding: 20px; text-align: center;'>You haven't booked any rides yet. <a href='../../services.php'>Book now!</a></td></tr>";
+                } catch (PDOException $e) {
+                     echo "<tr><td colspan='5'>Error loading bookings.</td></tr>";
                 }
                 ?>
             </tbody>

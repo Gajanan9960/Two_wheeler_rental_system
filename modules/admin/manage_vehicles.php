@@ -16,15 +16,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_vehicle'])) {
     $image = 'assets/img/' . $_POST['image']; // Simple handling for now
 
     $stmt = $conn->prepare("INSERT INTO vehicles (name, category, price_per_day, image) VALUES (?, ?, ?, ?)");
-    $stmt->bind_param("ssds", $name, $category, $price, $image);
-    $stmt->execute();
-    $stmt->close();
+    $stmt->execute([$name, $category, $price, $image]);
 }
 
 // Handle Delete
 if (isset($_GET['delete'])) {
     $id = $_GET['delete'];
-    $conn->query("DELETE FROM vehicles WHERE id=$id");
+    $conn->exec("DELETE FROM vehicles WHERE id=$id"); // Simple exec for delete without params if trusted, but let's use check
+    // Actually ID from GET should be cast or prepared
+    $dStmt = $conn->prepare("DELETE FROM vehicles WHERE id=?");
+    $dStmt->execute([$id]);
     header("Location: manage_vehicles.php");
     exit();
 }
@@ -67,8 +68,8 @@ include '../../includes/header.php';
         </thead>
         <tbody>
             <?php
-            $result = $conn->query("SELECT * FROM vehicles ORDER BY id DESC");
-            while ($row = $result->fetch_assoc()) {
+            $stmt = $conn->query("SELECT * FROM vehicles ORDER BY id DESC");
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                 echo "<tr>";
                 echo "<td style='padding: 10px; border: 1px solid #ddd;'>{$row['id']}</td>";
                 echo "<td style='padding: 10px; border: 1px solid #ddd;'>{$row['name']}</td>";

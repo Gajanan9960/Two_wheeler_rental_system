@@ -30,10 +30,10 @@ if (!isset($active_page)) {
         </a>
         <ul class="navbar">
             <li><a href="<?php echo $base_path; ?>/index.php" class="<?php echo ($active_page == 'home') ? 'active' : ''; ?>">Home</a></li>
-            <li><a href="<?php echo $base_path; ?>/ride.php" class="<?php echo ($active_page == 'ride') ? 'active' : ''; ?>">Ride</a></li>
-            <li><a href="<?php echo $base_path; ?>/services.php" class="<?php echo ($active_page == 'services') ? 'active' : ''; ?>">Services</a></li>
-            <li><a href="<?php echo $base_path; ?>/about.php" class="<?php echo ($active_page == 'about') ? 'active' : ''; ?>">About</a></li>
-            <li><a href="<?php echo $base_path; ?>/reviews.php" class="<?php echo ($active_page == 'reviews') ? 'active' : ''; ?>">Reviews</a></li>
+            <li><a href="<?php echo $base_path; ?>/pages/ride.php" class="<?php echo ($active_page == 'ride') ? 'active' : ''; ?>">Ride</a></li>
+            <li><a href="<?php echo $base_path; ?>/pages/services.php" class="<?php echo ($active_page == 'services') ? 'active' : ''; ?>">Services</a></li>
+            <li><a href="<?php echo $base_path; ?>/pages/about.php" class="<?php echo ($active_page == 'about') ? 'active' : ''; ?>">About</a></li>
+            <li><a href="<?php echo $base_path; ?>/pages/reviews.php" class="<?php echo ($active_page == 'reviews') ? 'active' : ''; ?>">Reviews</a></li>
         </ul>
         <div class="header-btn">
             <?php if (isset($_SESSION['user'])): ?>

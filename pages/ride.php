@@ -1,8 +1,9 @@
 <?php
 $page_title = "Ride - Ride-ease";
+$base_path = '..';
 $active_page = "ride";
-$extra_css = '<link rel="stylesheet" href="assets/css/ride.css">';
-include 'includes/header.php';
+$extra_css = '<link rel="stylesheet" href="../assets/css/ride.css">';
+include '../includes/header.php';
 ?>
 
 <section class="ride" id="ride">
@@ -51,4 +52,4 @@ include 'includes/header.php';
     </div>
 </section>
 
-<?php include 'includes/footer.php'; ?>
+<?php include '../includes/footer.php'; ?>

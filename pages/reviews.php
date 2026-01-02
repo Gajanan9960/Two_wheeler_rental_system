@@ -1,8 +1,9 @@
 <?php
 $page_title = "Bike Rental Reviews - Ride-ease";
+$base_path = '..';
 $active_page = "reviews";
-$extra_css = '<link rel="stylesheet" href="assets/css/reviews.css">';
-include 'includes/header.php';
+$extra_css = '<link rel="stylesheet" href="../assets/css/reviews.css">';
+include '../includes/header.php';
 ?>
 
 <h1 class="reviews-title">User Reviews</h1>
@@ -35,4 +36,4 @@ include 'includes/header.php';
     </div>
 </div>
 
-<?php include 'includes/footer.php'; ?>
+<?php include '../includes/footer.php'; ?>

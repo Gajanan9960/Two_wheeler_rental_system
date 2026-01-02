@@ -1,8 +1,9 @@
 <?php
 $page_title = "Contact Us - Ride-ease";
+$base_path = '..';
 $active_page = "contact"; // Note: 'contact' is not in the main nav, so no active highlight
-$extra_css = '<link rel="stylesheet" href="assets/css/contact.css">';
-include 'includes/header.php';
+$extra_css = '<link rel="stylesheet" href="../assets/css/contact.css">';
+include '../includes/header.php';
 ?>
 
 <section class="contact-page">
@@ -31,4 +32,4 @@ include 'includes/header.php';
     </div>
 </section>
 
-<?php include 'includes/footer.php'; ?>
+<?php include '../includes/footer.php'; ?>

@@ -9,8 +9,8 @@ include 'includes/header.php';
         <h1>Welcome to Ride-ease</h1>
         <p>Your one-stop solution for renting two-wheelers. Explore our affordable, eco-friendly options and experience the joy of freedom on wheels.</p>
         <div class="cta-buttons">
-            <a href="services.php" class="book-now">Book Now</a>
-            <a href="about.php" class="learn-more">Learn More</a>
+            <a href="pages/services.php" class="book-now">Book Now</a>
+            <a href="pages/about.php" class="learn-more">Learn More</a>
         </div>
     </div>
     <div class="hero-image">

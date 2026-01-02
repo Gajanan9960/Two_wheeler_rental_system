@@ -1,0 +1,88 @@
+/* Dashboard Layout */
+.content-container {
+    max-width: 1200px;
+    margin: 100px auto 40px;
+    /* Top margin to clear fixed header */
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    /* Subtle shadow */
+}
+
+h1 {
+    font-size: 2rem;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+h2 {
+    font-size: 1.5rem;
+    color: #444;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #fe5b3d;
+    /* Brand color underline */
+    display: inline-block;
+    padding-bottom: 5px;
+}
+
+/* Table Styling */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background-color: #fff;
+}
+
+thead tr {
+    background-color: #f4f4f4;
+    color: #333;
+    text-align: left;
+    font-weight: 600;
+}
+
+th,
+td {
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+tbody tr:hover {
+    background-color: #f9f9f9;
+}
+
+/* Status Colors */
+.status-confirmed {
+    color: #28a745;
+    font-weight: bold;
+}
+
+.status-cancelled {
+    color: #dc3545;
+    font-weight: bold;
+}
+
+.status-completed {
+    color: #007bff;
+    font-weight: bold;
+}
+
+.status-pending {
+    color: #ffc107;
+    font-weight: bold;
+}
+
+/* Responsive Table */
+@media (max-width: 768px) {
+    .content-container {
+        padding: 10px;
+        margin-top: 120px;
+        /* More space for stacked header? */
+    }
+
+    table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+}

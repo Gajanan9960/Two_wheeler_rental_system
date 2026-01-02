@@ -1,57 +1,99 @@
 /* Booking Page Specific Styles */
 .content-container {
     padding: 20px;
-    max-width: 1200px;
-    margin: 0 auto;
+    max-width: 800px;
+    /* Reduced width for better focus */
+    margin: 100px auto 40px;
+    /* Top margin to clear fixed header */
 }
 
 .form-container {
-    margin-top: 20px;
-    padding: 20px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    background-color: #f9f9f9;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    background-color: #ffffff;
 }
 
 .form-header {
-    font-size: 1.5rem;
-    font-weight: bold;
-    margin-bottom: 20px;
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 30px;
     text-align: center;
     color: #333;
+    border-bottom: 2px solid #fe5b3d;
+    padding-bottom: 10px;
+    display: inline-block;
+    width: 100%;
 }
 
+/* Bike Details Section */
 .rent-now {
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 30px;
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid #eee;
 }
 
 .rent-now img {
-    max-width: 100%;
+    max-width: 300px;
     height: auto;
     border-radius: 8px;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-.rent-now h3,
+.rent-now h3 {
+    margin: 10px 0 5px;
+    font-size: 1.5rem;
+    color: #444;
+}
+
 .rent-now p {
     margin: 5px 0;
+    font-size: 1.2rem;
+    color: #fe5b3d;
+    font-weight: 600;
 }
 
 /* Form Inputs */
 #booking-form {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 20px;
+}
+
+.form-row {
+    display: flex;
+    gap: 20px;
+}
+
+.form-row input,
+.form-row .form-group {
+    flex: 1;
 }
 
 #booking-form input {
     width: 100%;
-    padding: 12px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
     font-size: 1rem;
+    background-color: #fafafa;
+    transition: all 0.3s ease;
+}
+
+#booking-form input:focus {
+    border-color: #fe5b3d;
+    background-color: #fff;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(254, 91, 61, 0.1);
+}
+
+#booking-form input[readonly] {
+    background-color: #e9ecef;
+    cursor: not-allowed;
 }
 
 .form-group {
@@ -61,22 +103,52 @@
 }
 
 .form-group label {
-    margin-bottom: 5px;
-    font-weight: 500;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #555;
+    font-size: 0.9rem;
 }
 
 #booking-form button {
-    background-color: #007BFF;
+    background: linear-gradient(to right, #fe5b3d, #ffac38);
     color: white;
-    font-size: 1rem;
-    font-weight: bold;
-    padding: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    padding: 15px;
     border: none;
-    border-radius: 5px;
+    border-radius: 6px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    margin-top: 10px;
 }
 
 #booking-form button:hover {
-    background-color: #0056b3;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(254, 91, 61, 0.3);
+}
+
+#booking-form button:active {
+    transform: translateY(0);
+}
+
+#search-box {
+    margin-bottom: 10px;
+    /* Spacing for location input */
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .content-container {
+        margin-top: 120px;
+        padding: 15px;
+    }
+
+    .form-container {
+        padding: 20px;
+    }
+
+    .form-row {
+        flex-direction: column;
+        gap: 15px;
+    }
 }

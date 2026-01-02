@@ -2,17 +2,26 @@
 
 Welcome to the Ride-Ease Two-Wheeler Rental System! This application is designed to provide a seamless rental experience for users and a robust management interface for administrators.
 
-## 🚀 Getting Started on Windows (Seamless Setup)
+## 🚀 Getting Started (Automatic Setup)
+The project now supports **single-command execution** for both Windows and Mac/Linux. This will automatically start the server and attempt to configure the database if needed.
 
-This project handles paths and configurations to work smoothly on Windows environments like XAMPP, WAMP, or Laragon.
+### Windows (Single Command)
+1.  **Double-click** the file `run_windows.bat` in the project folder.
+2.  The application will open in your browser automatically.
+    *   *Note: If it's your first time, the system will attempt to auto-configure the database using default XAMPP settings (root/empty).*
 
-### Prerequisites
-1.  **XAMPP** (Recommended) or WAMP Server installed.
-    -   Download XAMPP: [apachefriends.org](https://www.apachefriends.org/index.html)
-2.  **Git** (Optional, to clone the repo).
+### Mac/Linux (Single Command)
+1.  Open Terminal in the project folder.
+2.  Run:
+    ```bash
+    ./run.sh
+    ```
 
-### Installation Steps
+---
 
+## 🛠 Manual Setup (Legacy)
+
+### Windows (Manual XAMPP)
 1.  **Clone/Copy the Project**:
     -   Place the project folder inside your `htdocs` directory.
     -   Example: `C:\xampp\htdocs\ride-ease`
@@ -25,25 +34,16 @@ This project handles paths and configurations to work smoothly on Windows enviro
     -   Open your browser and search for `http://localhost/phpmyadmin`.
     -   Click the **Import** tab.
     -   Select the file `database/setup.sql` from the project folder.
-    -   Click **Go** at the bottom.
-    -   *Note: This script will create the database and tables.*
+    -   Click **Go**.
     
-    **Fixing Permissions (Important):**
-    -   The default database configuration assumes a specific user. If you encounter "Access Denied", you can fix it by running the `database/fix_db_user.sql` script in the SQL tab of phpMyAdmin.
-    -   Alternatively, edit `config/db.php` to match your local Setup (Default XAMPP user is `root` with NO password).
+    *Troubleshooting permissions:*
+    -   If connection fails, check `config/db.php`.
+    -   Or run `database/fix_db_user.sql` manually.
 
-4.  **Verify Environment**:
-    -   Visit `http://localhost/ride-ease/check_env.php` to ensure everything is configured correctly.
-
-5.  **Run the App**:
+4.  **Run the App**:
     -   Go to `http://localhost/ride-ease/`
-    -   **Admin Login**: `admin@ride-ease.com` / `password123`
-    -   **User Login**: Sign up for a new account.
 
----
-
-## 🍎 Getting Started on Mac/Linux
-
+### Mac/Linux (Manual)
 1.  **Start MySQL Service**:
     ```bash
     brew services start mysql  # MacOS
@@ -53,7 +53,6 @@ This project handles paths and configurations to work smoothly on Windows enviro
 2.  **Setup Database**:
     ```bash
     mysql -u root -p < database/setup.sql
-    mysql -u root -p < database/grant_access.sql
     ```
 
 3.  **Run with Built-in Server**:

@@ -1,8 +1,9 @@
 <?php
 $page_title = "About Us - Ride-ease";
+$base_path = '..';
 $active_page = "about";
-$extra_css = '<link rel="stylesheet" href="assets/css/about.css">';
-include 'includes/header.php';
+$extra_css = '<link rel="stylesheet" href="../assets/css/about.css">';
+include '../includes/header.php';
 ?>
 
 <section class="about-page">
@@ -40,4 +41,4 @@ include 'includes/header.php';
     <a href="contact.php" class="contact-btn">Contact Us</a>
 </section>
 
-<?php include 'includes/footer.php'; ?>
+<?php include '../includes/footer.php'; ?>

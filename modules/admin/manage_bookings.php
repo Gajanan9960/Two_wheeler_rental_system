@@ -13,8 +13,7 @@ if (isset($_GET['action']) && isset($_GET['id'])) {
     $id = $_GET['id'];
     $status = $_GET['action']; // confirmed, cancelled, completed
     $stmt = $conn->prepare("UPDATE bookings SET status=? WHERE id=?");
-    $stmt->bind_param("si", $status, $id);
-    $stmt->execute();
+    $stmt->execute([$status, $id]);
     header("Location: manage_bookings.php");
     exit();
 }
@@ -46,36 +45,42 @@ include '../../includes/header.php';
                     JOIN users u ON b.user_id = u.id 
                     JOIN vehicles v ON b.vehicle_id = v.id 
                     ORDER BY b.created_at DESC";
-            $result = $conn->query($sql);
             
-            if ($result->num_rows > 0) {
-                while ($row = $result->fetch_assoc()) {
-                    $statusColor = 'orange';
-                    if($row['status'] == 'confirmed') $statusColor = 'green';
-                    if($row['status'] == 'cancelled') $statusColor = 'red';
-                    if($row['status'] == 'completed') $statusColor = 'blue';
+            try {
+                $stmt = $conn->query($sql);
+                $bookings = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-                    echo "<tr>";
-                    echo "<td style='padding: 10px; border: 1px solid #ddd;'>{$row['id']}</td>";
-                    echo "<td style='padding: 10px; border: 1px solid #ddd;'>{$row['username']}</td>";
-                    echo "<td style='padding: 10px; border: 1px solid #ddd;'>{$row['vehicle_name']}</td>";
-                    echo "<td style='padding: 10px; border: 1px solid #ddd;'>{$row['start_date']} to {$row['end_date']}</td>";
-                    echo "<td style='padding: 10px; border: 1px solid #ddd;'>₹{$row['total_price']}</td>";
-                    echo "<td style='padding: 10px; border: 1px solid #ddd; color: $statusColor; font-weight: bold;'>".ucfirst($row['status'])."</td>";
-                    echo "<td style='padding: 10px; border: 1px solid #ddd;'>";
-                    if ($row['status'] == 'pending') {
-                        echo "<a href='?action=confirmed&id={$row['id']}' style='color: green; margin-right: 10px;'>Confirm</a>";
-                        echo "<a href='?action=cancelled&id={$row['id']}' style='color: red;'>Cancel</a>";
-                    } elseif ($row['status'] == 'confirmed') {
-                        echo "<a href='?action=completed&id={$row['id']}' style='color: blue;'>Complete</a>";
-                    } else {
-                        echo "-";
+                if (count($bookings) > 0) {
+                    foreach ($bookings as $row) {
+                        $statusColor = 'orange';
+                        if($row['status'] == 'confirmed') $statusColor = 'green';
+                        if($row['status'] == 'cancelled') $statusColor = 'red';
+                        if($row['status'] == 'completed') $statusColor = 'blue';
+
+                        echo "<tr>";
+                        echo "<td style='padding: 10px; border: 1px solid #ddd;'>{$row['id']}</td>";
+                        echo "<td style='padding: 10px; border: 1px solid #ddd;'>{$row['username']}</td>";
+                        echo "<td style='padding: 10px; border: 1px solid #ddd;'>{$row['vehicle_name']}</td>";
+                        echo "<td style='padding: 10px; border: 1px solid #ddd;'>{$row['start_date']} to {$row['end_date']}</td>";
+                        echo "<td style='padding: 10px; border: 1px solid #ddd;'>₹{$row['total_price']}</td>";
+                        echo "<td style='padding: 10px; border: 1px solid #ddd; color: $statusColor; font-weight: bold;'>".ucfirst($row['status'])."</td>";
+                        echo "<td style='padding: 10px; border: 1px solid #ddd;'>";
+                        if ($row['status'] == 'pending') {
+                            echo "<a href='?action=confirmed&id={$row['id']}' style='color: green; margin-right: 10px;'>Confirm</a>";
+                            echo "<a href='?action=cancelled&id={$row['id']}' style='color: red;'>Cancel</a>";
+                        } elseif ($row['status'] == 'confirmed') {
+                            echo "<a href='?action=completed&id={$row['id']}' style='color: blue;'>Complete</a>";
+                        } else {
+                            echo "-";
+                        }
+                        echo "</td>";
+                        echo "</tr>";
                     }
-                    echo "</td>";
-                    echo "</tr>";
+                } else {
+                    echo "<tr><td colspan='7' style='padding: 20px; text-align: center;'>No bookings found.</td></tr>";
                 }
-            } else {
-                echo "<tr><td colspan='7' style='padding: 20px; text-align: center;'>No bookings found.</td></tr>";
+            } catch (PDOException $e) {
+                echo "<tr><td colspan='7'>Error loading bookings.</td></tr>";
             }
             ?>
         </tbody>

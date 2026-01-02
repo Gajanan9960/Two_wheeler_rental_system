@@ -10,40 +10,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
     if (!$email) {
         $error = "Invalid email format.";
     } else {
-        $sql = "SELECT username, email, password, role FROM users WHERE email = ?";
-        $stmt = $conn->prepare($sql);
-        if ($stmt) {
-            $stmt->bind_param("s", $email);
-            $stmt->execute();
-            $result = $stmt->get_result();
-            if ($result->num_rows > 0) {
-                $user = $result->fetch_assoc();
-                if (password_verify($password, $user['password'])) {
-                    $_SESSION['user'] = [
-                        'name' => $user['username'],
-                        'email' => $user['email'],
-                        'role' => $user['role']
-                    ];
-                    
-                    if ($user['role'] === 'admin') {
-                        header("Location: ../admin/dashboard.php");
-                    } else {
-                        header("Location: ../../index.php");
-                    }
-                    exit();
+        try {
+            $sql = "SELECT username, email, password, role FROM users WHERE email = ?";
+            $stmt = $conn->prepare($sql);
+            $stmt->execute([$email]);
+            
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($user && password_verify($password, $user['password'])) {
+                $_SESSION['user'] = [
+                    'name' => $user['username'],
+                    'email' => $user['email'],
+                    'role' => $user['role']
+                ];
+                
+                if ($user['role'] === 'admin') {
+                    header("Location: ../admin/dashboard.php");
                 } else {
-                    $error = "Invalid email or password.";
+                    header("Location: ../../index.php");
                 }
+                exit();
             } else {
                 $error = "Invalid email or password.";
             }
-            $stmt->close();
-        } else {
+        } catch (PDOException $e) {
             $error = "Database error.";
         }
     }
 }
-$conn->close();
 ?>
 <!DOCTYPE html>
 <html lang="en">
