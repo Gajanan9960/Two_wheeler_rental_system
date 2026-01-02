@@ -9,7 +9,7 @@ echo "Note: Your password will NOT be visible while typing."
 echo ""
 
 # Run setup using the user's input password
-mysql -h 127.0.0.1 -u root -p < database/setup.sql
+mysql -h 127.0.0.1 -u root -p < ../database/setup.sql
 
 if [ $? -eq 0 ]; then
     echo ""

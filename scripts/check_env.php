@@ -3,8 +3,8 @@ $requirements = [
     'php' => '7.4.0',
     'extensions' => ['pdo', 'pdo_sqlite', 'session', 'json'],
     'write_permissions' => [
-        __DIR__ . '/database',
-        __DIR__ . '/uploads' // If you have uploads
+        __DIR__ . '/../database',
+        __DIR__ . '/../uploads' // If you have uploads
     ]
 ];
 
@@ -27,7 +27,7 @@ foreach ($requirements['extensions'] as $ext) {
 }
 
 // Check Database Config
-$config_file = __DIR__ . '/config/db.php';
+$config_file = __DIR__ . '/../config/db.php';
 if (!file_exists($config_file)) {
     $errors[] = "Configuration file 'config/db.php' not found.";
 } else {

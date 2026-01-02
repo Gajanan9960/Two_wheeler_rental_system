@@ -2,7 +2,7 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-include 'config/db.php';
+include '../config/db.php';
 
 echo "Database connection successful.\n";
 

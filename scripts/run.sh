@@ -22,4 +22,5 @@ else
     (sleep 2 && xdg-open http://localhost:8000) &
 fi
 
+cd ..
 php -S localhost:8000

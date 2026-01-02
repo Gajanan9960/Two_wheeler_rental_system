@@ -38,14 +38,14 @@ if (!isset($active_page)) {
         <div class="header-btn">
             <?php if (isset($_SESSION['user'])): ?>
                 <?php if (isset($_SESSION['user']['role']) && $_SESSION['user']['role'] === 'admin'): ?>
-                    <a href="<?php echo $base_path; ?>/modules/admin/dashboard.php" class="sign-up" style="margin-right: 10px; text-decoration: none; color: #333;">Admin Panel</a>
+                    <a href="<?php echo $base_path; ?>/pages/admin/dashboard.php" class="sign-up" style="margin-right: 10px; text-decoration: none; color: #333;">Admin Panel</a>
                 <?php else: ?>
-                    <a href="<?php echo $base_path; ?>/modules/user/dashboard.php" class="sign-up" style="margin-right: 10px; text-decoration: none; color: #333;">My Dashboard</a>
+                    <a href="<?php echo $base_path; ?>/pages/user/dashboard.php" class="sign-up" style="margin-right: 10px; text-decoration: none; color: #333;">My Dashboard</a>
                 <?php endif; ?>
-                <a href="<?php echo $base_path; ?>/modules/auth/logout.php" class="sign-in" style="text-decoration: none; color: #333;">Logout</a>
+                <a href="<?php echo $base_path; ?>/pages/auth/logout.php" class="sign-in" style="text-decoration: none; color: #333;">Logout</a>
             <?php else: ?>
-                <a href="<?php echo $base_path; ?>/modules/auth/signup.php" class="sign-up" style="margin-right: 10px; text-decoration: none; color: #333;">Sign-up</a>
-                <a href="<?php echo $base_path; ?>/modules/auth/login.php" class="sign-in" style="text-decoration: none; color: #333;">Sign-in</a>
+                <a href="<?php echo $base_path; ?>/pages/auth/signup.php" class="sign-up" style="margin-right: 10px; text-decoration: none; color: #333;">Sign-up</a>
+                <a href="<?php echo $base_path; ?>/pages/auth/login.php" class="sign-in" style="text-decoration: none; color: #333;">Sign-in</a>
             <?php endif; ?>
         </div>
     </header>

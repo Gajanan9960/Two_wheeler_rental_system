@@ -20,5 +20,6 @@ echo.
 echo 3. Starting PHP built-in server...
 echo    (Press Ctrl+C to stop)
 echo.
+cd ..
 php -S localhost:8000
 pause

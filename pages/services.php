@@ -59,7 +59,7 @@ include '../includes/header.php';
                         echo '    </div>';
                         echo '    <h3>' . htmlspecialchars($row['name']) . '</h3>';
                         echo '    <h2>Rs. ' . htmlspecialchars($row['price_per_day']) . '<span>/day</span></h2>';
-                        echo '    <a href="../modules/bookings/rent.php?id=' . $row['id'] . '&name=' . urlencode($row['name']) . '&price=' . $row['price_per_day'] . '&image=' . urlencode($row['image']) . '" class="btn">Rent Now</a>';
+                        echo '    <a href="../pages/bookings/rent.php?id=' . $row['id'] . '&name=' . urlencode($row['name']) . '&price=' . $row['price_per_day'] . '&image=' . urlencode($row['image']) . '" class="btn">Rent Now</a>';
                         echo '</div>';
                     }
                     echo '</div>';
