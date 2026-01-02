@@ -21,7 +21,7 @@ include '../../includes/header.php';
 
 <div class="content-container">
     <h1>My Dashboard</h1>
-    <p>Welcome, <?php echo htmlspecialchars($_SESSION['user']['name']); ?>!</p>
+
 
     <div style="margin-top: 30px;">
         <h2>My Rides</h2>

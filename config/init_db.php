@@ -15,7 +15,12 @@ if (!file_exists($db_file)) {
                 email TEXT NOT NULL UNIQUE,
                 password TEXT NOT NULL,
                 phone TEXT,
-                role TEXT DEFAULT 'user',
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            )",
+            "CREATE TABLE IF NOT EXISTS admins (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                username TEXT NOT NULL UNIQUE,
+                password TEXT NOT NULL,
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP
             )",
             "CREATE TABLE IF NOT EXISTS vehicles (
@@ -41,8 +46,8 @@ if (!file_exists($db_file)) {
                 FOREIGN KEY (vehicle_id) REFERENCES vehicles(id)
             )",
             // Seed Admin
-            "INSERT INTO users (username, email, password, role) VALUES 
-            ('Admin', 'admin@ride-ease.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin')",
+            "INSERT INTO admins (username, password) VALUES 
+            ('admin', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi')",
             // Seed Vehicles
             "INSERT INTO vehicles (name, category, price_per_day, image) VALUES
             ('Honda SP 125', 'bike', 599.00, 'assets/img/sp125sprightfrontthreequarter.jpeg'),
