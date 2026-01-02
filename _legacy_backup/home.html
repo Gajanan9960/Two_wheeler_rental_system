@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ride-ease: Two-Wheeler Rental System</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <a href="#" class="logo"><img src="img/logo-search-grid-2x.png" alt="Ride-ease Logo"></a>
+        <ul class="navbar">
+            <li><a href="" class="active">Home</a></li>
+            <li><a href="">Ride</a></li>
+            <li><a href="">Services</a></li>
+            <li><a href="">About</a></li>
+            <li><a href="">Reviews</a></li>
+        </ul>
+        <div class="header-btn">
+            <a href="signup.html" class="sign-up">Sign-up</a>
+            <a href="login.html" class="sign-in">Sign-in</a>
+        </div>
+    </header>
+    
+    <section class="hero">
+        <div class="text">
+            <h1>Welcome to Ride-ease</h1>
+            <p>Your one-stop solution for renting two-wheelers. Explore our affordable, eco-friendly options and experience the joy of freedom on wheels.</p>
+            <div class="cta-buttons">
+                <a href="services.html" class="book-now">Book Now</a>
+                <a href="about.html" class="learn-more">Learn More</a>
+            </div>
+        </div>
+    </section>
+    <script>
+        
+     var isLoggedIn = false;
+
+function alertLogin() {
+    alert("Please first log in."); 
+}
+
+// Attach click event to components
+function attachClickEvents() {
+    document.querySelectorAll('.navbar,.book-now,.learn-more').forEach(function(element) {
+        element.onclick = function(event) {
+            if (!isLoggedIn) {
+                event.preventDefault(); // Prevent default action
+                alertLogin(); // Show alert
+            }
+        };
+    });
+}
+attachClickEvents();
+    </script>
+</body>
+</html>
