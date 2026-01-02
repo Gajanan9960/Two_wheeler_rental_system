@@ -11,29 +11,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
         $error = "Invalid email format.";
     } else {
         try {
-            $sql = "SELECT username, email, password, role FROM users WHERE email = ?";
-            $sql = "SELECT id, username, email, password FROM users WHERE email = ?";
+            $sql = "SELECT id, username, email, password, role FROM users WHERE email = ?";
             $stmt = $conn->prepare($sql);
             $stmt->execute([$email]);
             
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
             if ($user && password_verify($password, $user['password'])) {
-        $_SESSION['user'] = [
-            'id' => $user['id'],
-            'name' => $user['username'],
-            'email' => $user['email']
-        ];
-        // Redirect to Home or User Dashboard
-        if (isset($_GET['redirect'])) {
-             header("Location: ".urldecode($_GET['redirect']));
-        } else {
-             header("Location: ../../index.php");
-        }
-        exit();
-    } else {
-        $error = "Invalid email or password.";
-    }        }
+                $_SESSION['user'] = [
+                    'id' => $user['id'],
+                    'name' => $user['username'],
+                    'email' => $user['email'],
+                    'role' => $user['role'] ?? 'user'
+                ];
+                // Redirect to Home or User Dashboard
+                if (isset($_GET['redirect'])) {
+                     header("Location: ".urldecode($_GET['redirect']));
+                } else {
+                     header("Location: ../../index.php");
+                }
+                exit();
+            } else {
+                $error = "Invalid email or password.";
+            }
         } catch (PDOException $e) {
             $error = "Database error.";
         }
