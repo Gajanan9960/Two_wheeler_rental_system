@@ -7,24 +7,34 @@ $error = null;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     verifyCSRFToken($_POST['csrf_token']);
-    $username = $_POST['username'];
+    $email = filter_var($_POST['email'], FILTER_VALIDATE_EMAIL);
     $password = $_POST['password'];
 
-    try {
-        $stmt = $conn->prepare("SELECT * FROM admins WHERE username = ?");
-        $stmt->execute([$username]);
-        $admin = $stmt->fetch(PDO::FETCH_ASSOC);
+    if (!$email) {
+        $error = "Invalid email format.";
+    } else {
+        try {
+            // Check in users table for admin role
+            $stmt = $conn->prepare("SELECT id, username, password, role FROM users WHERE email = ? AND role = 'admin'");
+            $stmt->execute([$email]);
+            $admin = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if ($admin && password_verify($password, $admin['password'])) {
-            $_SESSION['admin_id'] = $admin['id'];
-            $_SESSION['admin_name'] = $admin['username'];
-            header("Location: dashboard.php");
-            exit();
-        } else {
-            $error = "Invalid admin credentials.";
+            if ($admin && password_verify($password, $admin['password'])) {
+                $_SESSION['user'] = [
+                    'id' => $admin['id'],
+                    'name' => $admin['username'],
+                    'email' => $email,
+                    'role' => 'admin'
+                ];
+                header("Location: dashboard.php");
+                exit();
+            } else {
+                $error = "Invalid admin credentials or access denied.";
+            }
+        } catch (PDOException $e) {
+            $error = "Database Error.";
+            error_log($e->getMessage()); // Log error for debugging
         }
-    } catch (PDOException $e) {
-        $error = "Database Error.";
     }
 }
 ?>
@@ -82,12 +92,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
     <div class="login-box">
         <h2>Admin Panel</h2>
+        <div style="background: #e8f4fd; border: 1px dashed #2196F3; padding: 10px; margin-bottom: 20px; border-radius: 5px; font-size: 0.85rem; color: #0d47a1; text-align: left;">
+            <strong>Default Credentials:</strong><br>
+            Email: admin@ride-ease.com<br>
+            Password: password123
+        </div>
         <?php if ($error): ?>
             <div class="error"><?php echo $error; ?></div>
         <?php endif; ?>
         <form method="POST">
             <input type="hidden" name="csrf_token" value="<?php echo generateCSRFToken(); ?>">
-            <input type="text" name="username" placeholder="Username" required>
+            <input type="email" name="email" placeholder="Email Address" required>
             <input type="password" name="password" placeholder="Password" required>
             <button type="submit">Login</button>
         </form>

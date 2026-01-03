@@ -5,6 +5,7 @@ $active_page = "reviews";
 $extra_css = '<link rel="stylesheet" href="../assets/css/reviews.css">';
 include '../includes/header.php';
 include '../config/db.php';
+include_once '../includes/csrf.php';
 ?>
 
 <h1 class="reviews-title">User Reviews</h1>
@@ -13,7 +14,6 @@ include '../config/db.php';
     <?php
     // Handle Review Submission
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        include '../includes/csrf.php';
         verifyCSRFToken($_POST['csrf_token']);
         if (isset($_SESSION['user'])) {
             $user_id = $_SESSION['user']['id'];

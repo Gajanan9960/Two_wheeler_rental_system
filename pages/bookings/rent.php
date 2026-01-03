@@ -33,48 +33,67 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $end_date = $_POST['return_date'];
     $price_per_day = $_POST['price_per_day']; // Hidden field
     
-    // Calculate total price
-    $diff = strtotime($end_date) - strtotime($start_date);
-    $days = ceil($diff / (60 * 60 * 24));
-    if ($days < 1) $days = 1; // Minimum 1 day
-    $total_price = $days * $price_per_day;
+    // Server-side Validation
+    if ($start_date < date('Y-m-d')) {
+        $message = "Pickup date cannot be in the past.";
+        $messageType = "error";
+    } elseif ($end_date < $start_date) {
+        $message = "Return date must be equal to or after pickup date.";
+        $messageType = "error";
+    } else {
+        // Security: Fetch price from DB instead of trusting hidden field
+        $vStmt = $conn->prepare("SELECT name, price_per_day FROM vehicles WHERE id = ?");
+        $vStmt->execute([$vehicle_id]);
+        $vehicle = $vStmt->fetch(PDO::FETCH_ASSOC);
 
-    // Check Availability
-    try {
-        $check_sql = "SELECT 1 FROM bookings 
-                      WHERE vehicle_id = ? 
-                      AND status != 'cancelled' 
-                      AND ((start_date <= ? AND end_date >= ?) OR (start_date <= ? AND end_date >= ?))";
-        $stmt = $conn->prepare($check_sql);
-        $stmt->execute([$vehicle_id, $end_date, $start_date, $start_date, $end_date]);
-
-        if ($stmt->fetch()) {
-            $message = "Sorry, this vehicle is not available for the selected dates.";
+        if (!$vehicle) {
+            $message = "Invalid vehicle selected.";
             $messageType = "error";
         } else {
-            // Create Booking
-            $ins_sql = "INSERT INTO bookings (user_id, vehicle_id, start_date, end_date, total_price, status) VALUES (?, ?, ?, ?, ?, 'pending')";
-            $stmt2 = $conn->prepare($ins_sql);
-            
-            if ($stmt2->execute([$user_id, $vehicle_id, $start_date, $end_date, $total_price])) {
-                // Fetch vehicle name for email
-                $vStmt = $conn->prepare("SELECT name FROM vehicles WHERE id = ?");
-                $vStmt->execute([$vehicle_id]);
-                $vName = $vStmt->fetchColumn();
+            $price_per_day = $vehicle['price_per_day'];
+            $vName = $vehicle['name'];
 
-                $emailBody = "Hi " . $_SESSION['user']['name'] . ",\n\nYour booking for $vName from $start_date to $end_date has been received.\nTotal Price: ₹$total_price\n\nStatus: Pending Approval.\n\nThanks,\nRide-ease Team";
-                sendEmail($_SESSION['user']['email'], "Booking Confirmation - Ride-ease", $emailBody);
+            // Calculate total price
+            $diff = strtotime($end_date) - strtotime($start_date);
+            $days = ceil($diff / (60 * 60 * 24));
+            if ($days < 1) $days = 1; // Minimum 1 day charge
+            $total_price = $days * $price_per_day;
 
-                $message = "Booking successful! Your request is pending approval.";
-                $messageType = "success";
-            } else {
-                $message = "Error creating booking. Please try again.";
+            // Check Availability
+            try {
+                $check_sql = "SELECT 1 FROM bookings 
+                              WHERE vehicle_id = ? 
+                              AND status != 'cancelled' 
+                              AND ((start_date <= ? AND end_date >= ?) OR (start_date <= ? AND end_date >= ?))";
+                $stmt = $conn->prepare($check_sql);
+                $stmt->execute([$vehicle_id, $end_date, $start_date, $start_date, $end_date]);
+
+                if ($stmt->fetch()) {
+                    $message = "Sorry, this vehicle is not available for the selected dates.";
+                    $messageType = "error";
+                } else {
+                    // Create Booking
+                    $ins_sql = "INSERT INTO bookings (user_id, vehicle_id, start_date, end_date, total_price, status) VALUES (?, ?, ?, ?, ?, 'pending')";
+                    $stmt2 = $conn->prepare($ins_sql);
+                    
+                    if ($stmt2->execute([$user_id, $vehicle_id, $start_date, $end_date, $total_price])) {
+                        // Send Email Notification
+                        $emailBody = "Hi " . $_SESSION['user']['name'] . ",\n\nYour booking for $vName from $start_date to $end_date has been received.\nTotal Price: ₹$total_price\n\nStatus: Pending Approval.\n\nThanks,\nRide-ease Team";
+                        sendEmail($_SESSION['user']['email'], "Booking Confirmation - Ride-ease", $emailBody);
+
+                        $message = "Booking successful! Your request is pending approval.";
+                        $messageType = "success";
+                    } else {
+                        $message = "Error creating booking. Please try again.";
+                        $messageType = "error";
+                    }
+                }
+            } catch (PDOException $e) {
+                error_log("Booking DB Error: " . $e->getMessage());
+                $message = "An unexpected error occurred. Please try again.";
                 $messageType = "error";
             }
         }
-    } catch (PDOException $e) {
-        $message = "Database Error: " . $e->getMessage();
-        $messageType = "error";
     }
 }
 

@@ -65,6 +65,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <button type="submit">Sign Up</button>
       <p>Already have an account? <a href="login.php">Sign In</a></p>
       <p><a href="../../index.php">Back to Home</a></p>
+      <p class="admin-link" style="margin-top: 20px; font-size: 0.85rem;"><a href="../admin/login.php" style="color: #444; font-weight: 600; text-shadow: 0 1px 2px rgba(0,0,0,0.1);">Admin Login</a></p>
+      <div style="margin-top: 10px; font-size: 0.75rem; color: #777; background: #f9f9f9; padding: 10px; border-radius: 5px; border: 1px dashed #ccc;">
+          <strong>Default Admin Credentials:</strong><br>
+          Email: admin@ride-ease.com<br>
+          Password: password123
+      </div>
     </form>
   </div>
 </body>

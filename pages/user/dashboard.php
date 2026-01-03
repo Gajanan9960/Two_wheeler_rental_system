@@ -64,7 +64,7 @@ include '../../includes/header.php';
                             echo "</tr>";
                         }
                     } else {
-                        echo "<tr><td colspan='5' style='text-align: center; padding: 30px;'>You haven't booked any rides yet. <a href='../../services.php' style='color: #fe5b3d; font-weight: bold;'>Book now!</a></td></tr>";
+                        echo "<tr><td colspan='5' style='text-align: center; padding: 30px;'>You haven't booked any rides yet. <a href='../services.php' style='color: #fe5b3d; font-weight: bold;'>Book now!</a></td></tr>";
                     }
                 } catch (PDOException $e) {
                      echo "<tr><td colspan='5'>Error loading bookings.</td></tr>";
