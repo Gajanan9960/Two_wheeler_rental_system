@@ -174,12 +174,15 @@ header {
     border-radius: 0.5rem;
 }
 
-.header-btn .sign-in:hover {
-    background-color: #fe5b3d;
+.header-btn .sign-up:hover {
+    background-color: #353b7b;
+    /* Darker Blue */
 }
 
-.header-btn .sign-up:hover {
-    background-color: #fe5b3d;
+.header-btn .sign-in:hover {
+    background-color: #474fa0;
+    /* Primary Blue */
+    color: white;
 }
 
 .home {
@@ -351,23 +354,30 @@ header {
 }
 
 .header-btn .sign-up {
-    background-color: #007BFF;
+    background: var(--gradient);
     color: white;
+    border: none;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .header-btn .sign-up:hover {
-    background-color: #0056b3;
+    background: linear-gradient(to right, #e04a2c, #fe5b3d);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(254, 91, 61, 0.4);
 }
 
 .header-btn .sign-in {
     background-color: transparent;
-    color: #333;
-    border: 1px solid #333;
+    color: var(--main-color);
+    border: 2px solid var(--main-color);
+    font-weight: 600;
 }
 
 .header-btn .sign-in:hover {
-    background-color: #333;
+    background-color: var(--main-color);
     color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(254, 91, 61, 0.3);
 }
 
 /* Hero Section */
@@ -376,28 +386,117 @@ header {
     align-items: center;
     justify-content: space-between;
     padding: 150px 100px 100px;
-    /* More top padding for fixed header */
-    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('../img/hero_bg.png') no-repeat center center/cover;
+    background: linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.85)), url('../img/hero_bg.png') no-repeat center center/cover;
+    /* Very dark overlay */
     color: white;
     min-height: 100vh;
     text-align: left;
+    position: relative;
+    overflow: hidden;
 }
 
 .hero .text {
     max-width: 600px;
-    z-index: 1;
+    z-index: 2;
+    background: rgba(0, 0, 0, 0.2);
+    /* Subtle backing */
+    padding: 30px;
+    border-radius: 15px;
+    backdrop-filter: blur(3px);
 }
 
 .hero h1 {
     font-size: 3.5rem;
     margin-bottom: 20px;
     font-weight: 700;
+    text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
+    /* Shadow for visibility */
+    animation: fadeInLeft 1s ease-out;
+}
+
+/* Conflicting rule override */
+.hero .text p {
+    color: #ffffff;
+    font-weight: 600;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 1);
+    /* Crisp shadow */
 }
 
 .hero p {
     font-size: 1.2rem;
     margin-bottom: 30px;
     line-height: 1.8;
+    color: #ffffff;
+    animation: fadeInUp 1s ease-out 0.3s;
+    animation-fill-mode: backwards;
+}
+
+.cta-buttons {
+    display: flex;
+    gap: 20px;
+    animation: fadeInUp 1s ease-out 0.6s;
+    animation-fill-mode: backwards;
+}
+
+.book-now,
+.learn-more {
+    padding: 14px 35px;
+    border-radius: 50px;
+    font-weight: 600;
+    text-decoration: none;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.book-now {
+    background-color: var(--main-color);
+    color: white;
+    box-shadow: 0 5px 15px rgba(254, 91, 61, 0.4);
+}
+
+.book-now:hover {
+    background-color: #ff4520;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(254, 91, 61, 0.6);
+}
+
+.learn-more {
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid white;
+    color: white;
+    backdrop-filter: blur(5px);
+}
+
+.learn-more:hover {
+    background-color: white;
+    color: #333;
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(255, 255, 255, 0.3);
+}
+
+/* Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
 }
 
 .hero-image {

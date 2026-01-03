@@ -5,7 +5,6 @@ $active_page = "reviews";
 $extra_css = '<link rel="stylesheet" href="../assets/css/reviews.css">';
 include '../includes/header.php';
 include '../config/db.php';
-session_start(); // Ensure session is available for user check
 ?>
 
 <h1 class="reviews-title">User Reviews</h1>

@@ -37,7 +37,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
             }
         } catch (PDOException $e) {
-            $error = "Database error: " . $e->getMessage();
+ error_log("Registration DB Error: " . $e->getMessage());
+            $error = "An unexpected error occurred. Please try again later.";
         }
     }
 }

@@ -22,5 +22,6 @@ else
     (sleep 2 && xdg-open http://localhost:8000) &
 fi
 
-cd ..
+# Navigate to project root (parent of scripts dir)
+cd "$(dirname "$0")/.."
 php -S localhost:8000

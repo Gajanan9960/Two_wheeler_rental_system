@@ -1,7 +1,5 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+include_once __DIR__ . '/../config/session.php';
 if (!isset($page_title)) {
     $page_title = 'Ride-ease: Two-Wheeler Rental System';
 }
