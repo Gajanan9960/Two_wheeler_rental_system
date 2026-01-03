@@ -1,10 +1,13 @@
 <?php
 session_start();
 include '../../config/db.php';
+include '../../includes/csrf.php';
 
 $error = null;
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
+    verifyCSRFToken($_POST['csrf_token']);
     $email = filter_var($_POST['email'], FILTER_VALIDATE_EMAIL);
+
     $password = $_POST['password'];
 
     if (!$email) {
@@ -52,13 +55,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
   <div class="login-container">
     <form method="POST" action="">
       <h2>Login</h2>
+      <input type="hidden" name="csrf_token" value="<?php echo generateCSRFToken(); ?>">
       <?php if ($error): ?>
         <p class="error" style="color: red;"><?php echo $error; ?></p>
       <?php endif; ?>
       <input type="email" name="email" placeholder="Email" required>
       <input type="password" name="password" placeholder="Password" required>
       <button type="submit" name="login">Login</button>
-      <p><a href="#">Forgot Password?</a></p>
+      <p><a href="forgot_password.php" style="color: #fe5b3d;">Forgot Password?</a></p>
       <p>Don't have an account? <a href="signup.php">Sign up</a></p>
       <p><a href="../../index.php">Back to Home</a></p>
     </form>

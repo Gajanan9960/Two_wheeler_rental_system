@@ -1,10 +1,12 @@
 <?php
 session_start();
 include '../../config/db.php';
+include '../../includes/csrf.php';
 
 $error = null;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    verifyCSRFToken($_POST['csrf_token']);
     $username = $_POST['username'];
     $password = $_POST['password'];
 
@@ -84,6 +86,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="error"><?php echo $error; ?></div>
         <?php endif; ?>
         <form method="POST">
+            <input type="hidden" name="csrf_token" value="<?php echo generateCSRFToken(); ?>">
             <input type="text" name="username" placeholder="Username" required>
             <input type="password" name="password" placeholder="Password" required>
             <button type="submit">Login</button>

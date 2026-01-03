@@ -11,6 +11,9 @@ try {
     // Enable Foreign Keys
     $conn->exec("PRAGMA foreign_keys = ON;");
 } catch (PDOException $e) {
-    die("Connection failed: " . $e->getMessage());
+    // Log error to file
+    error_log("[" . date("Y-m-d H:i:s") . "] Database Error: " . $e->getMessage() . "\n", 3, __DIR__ . '/../logs/php_error.log');
+    // Show generic message
+    die("Service temporarily unavailable. Please try again later.");
 }
 ?>

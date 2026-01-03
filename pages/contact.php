@@ -10,7 +10,26 @@ include '../includes/header.php';
     <h1>Contact Us</h1>
     <p>If you have any questions, feel free to reach out. We are here to assist you!</p>
     <div class="contact-container">
-        <form class="contact-form" action="#" method="post">
+        <?php
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            include '../includes/csrf.php';
+            verifyCSRFToken($_POST['csrf_token']);
+            include '../config/db.php';
+            $name = htmlspecialchars($_POST['name']);
+            $email = htmlspecialchars($_POST['email']);
+            $message = htmlspecialchars($_POST['message']);
+
+            try {
+                $stmt = $conn->prepare("INSERT INTO contact_messages (name, email, message) VALUES (?, ?, ?)");
+                $stmt->execute([$name, $email, $message]);
+                echo "<p style='color: green; text-align: center; font-weight: bold;'>Message sent successfully! We will get back to you soon.</p>";
+            } catch (PDOException $e) {
+                echo "<p style='color: red; text-align: center;'>Error sending message. Please try again.</p>";
+            }
+        }
+        ?>
+        <form class="contact-form" action="" method="post">
+            <input type="hidden" name="csrf_token" value="<?php echo generateCSRFToken(); ?>">
             <label for="name">Full Name</label>
             <input type="text" id="name" name="name" placeholder="Your Name" required>
 

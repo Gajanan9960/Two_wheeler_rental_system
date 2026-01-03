@@ -1,10 +1,14 @@
 <?php
 session_start();
 include '../../config/db.php';
+include '../../includes/csrf.php';
+include '../../includes/mailer.php';
 
 $error = null;
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    verifyCSRFToken($_POST['csrf_token']);
     $username = htmlspecialchars($_POST['username']);
+
     $email = filter_var($_POST['email'], FILTER_VALIDATE_EMAIL);
     $password = $_POST['password'];
 
@@ -25,6 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $sql = "INSERT INTO users (username, email, password) VALUES (?, ?, ?)";
                 $stmt = $conn->prepare($sql);
                 if ($stmt->execute([$username, $email, $hashedPassword])) {
+                    sendEmail($email, "Welcome to Ride-ease!", "Hi $username,\n\nThank you for signing up with Ride-ease. We are excited to have you on board!");
                     header("Location: login.php");
                     exit();
                 } else {
@@ -49,6 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <div class="login-container">
     <form method="POST" action="">
       <h2>Sign Up</h2>
+      <input type="hidden" name="csrf_token" value="<?php echo generateCSRFToken(); ?>">
       <?php if ($error): ?>
         <p class="error" style="color: red;"><?php echo $error; ?></p>
       <?php endif; ?>

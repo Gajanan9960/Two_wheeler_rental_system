@@ -10,6 +10,8 @@ if (!isset($_SESSION['admin_id'])) {
 
 // Handle Add Vehicle
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_vehicle'])) {
+    include '../../includes/csrf.php';
+    verifyCSRFToken($_POST['csrf_token']);
     $name = $_POST['name'];
     $category = $_POST['category'];
     $price = $_POST['price'];
@@ -22,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_vehicle'])) {
 // Handle Delete
 if (isset($_GET['delete'])) {
     $id = $_GET['delete'];
-    $conn->exec("DELETE FROM vehicles WHERE id=$id"); // Simple exec for delete without params if trusted, but let's use check
+    // Removed insecure exec call
     // Actually ID from GET should be cast or prepared
     $dStmt = $conn->prepare("DELETE FROM vehicles WHERE id=?");
     $dStmt->execute([$id]);
@@ -54,6 +56,7 @@ if (isset($_GET['delete'])) {
             <div class="admin-table-container" style="flex: 1;">
                 <h3>Add New Vehicle</h3>
                 <form method="POST" action="" class="admin-form">
+                    <input type="hidden" name="csrf_token" value="<?php echo generateCSRFToken(); ?>">
                     <input type="text" name="name" placeholder="Vehicle Name" required>
                     <select name="category" required>
                         <option value="bike">Bike</option>

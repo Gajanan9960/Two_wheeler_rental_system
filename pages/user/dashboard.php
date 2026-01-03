@@ -20,7 +20,10 @@ include '../../includes/header.php';
 ?>
 
 <div class="content-container">
-    <h1>My Dashboard</h1>
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h1>My Dashboard</h1>
+        <a href="profile.php" style="background: #333; color: white; padding: 10px 15px; text-decoration: none; border-radius: 5px;">Edit Profile</a>
+    </div>
 
 
     <div style="margin-top: 30px;">

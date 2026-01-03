@@ -10,7 +10,8 @@ function isActive($page) {
         <li><a href="dashboard.php" class="<?php echo isActive('dashboard'); ?>">Dashboard</a></li>
         <li><a href="manage_bookings.php" class="<?php echo isActive('manage_bookings'); ?>">Bookings</a></li>
         <li><a href="manage_vehicles.php" class="<?php echo isActive('manage_vehicles'); ?>">Vehicles</a></li>
-        <li><a href="manage_users.php" class="<?php echo isActive('manage_users'); ?>">Users</a></li> <!-- New -->
+        <li><a href="manage_users.php" class="<?php echo isActive('manage_users'); ?>">Users</a></li>
+        <li><a href="messages.php" class="<?php echo isActive('messages'); ?>">Messages</a></li>
         <li><a href="../../index.php">View Site</a></li>
         <li><a href="../auth/logout.php" style="color: #e74c3c;">Logout</a></li>
     </ul>
