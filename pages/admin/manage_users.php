@@ -9,11 +9,33 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
     exit();
 }
 
+// Handle Role Toggle
+if (isset($_GET['make_admin'])) {
+    $id = $_GET['make_admin'];
+    $stmt = $conn->prepare("UPDATE users SET role='admin' WHERE id=?");
+    $stmt->execute([$id]);
+    header("Location: manage_users.php");
+    exit();
+}
+if (isset($_GET['revoke_admin'])) {
+    $id = $_GET['revoke_admin'];
+    // Prevent self-demotion
+    if ($_SESSION['user']['id'] != $id) {
+        $stmt = $conn->prepare("UPDATE users SET role='user' WHERE id=?");
+        $stmt->execute([$id]);
+    }
+    header("Location: manage_users.php");
+    exit();
+}
+
 // Handle Delete (optional, but requested control)
 if (isset($_GET['delete'])) {
     $id = $_GET['delete'];
-    $stmt = $conn->prepare("DELETE FROM users WHERE id=? AND role='user'"); // Protect admin from self-delete loop here (basic)
-    $stmt->execute([$id]);
+    // Prevent self-delete
+    if ($_SESSION['user']['id'] != $id) {
+        $stmt = $conn->prepare("DELETE FROM users WHERE id=?"); 
+        $stmt->execute([$id]);
+    }
     header("Location: manage_users.php");
     exit();
 }
@@ -59,7 +81,18 @@ if (isset($_GET['delete'])) {
                         echo "<td><span style='background:#eee; padding:3px 8px; border-radius:4px;'>".ucfirst($row['role'] ?? 'User')."</span></td>";
                         echo "<td>{$row['created_at']}</td>";
                         echo "<td>";
-                        echo "<a href='?delete={$row['id']}' class='btn-admin btn-danger' onclick='return confirm(\"Delete this user?\")'>Delete</a>";
+                        if ($row['role'] !== 'admin') {
+                            echo "<a href='?make_admin={$row['id']}' class='btn-admin btn-info' onclick='return confirm(\"Make this user an Admin?\")' style='margin-right:5px; font-size:0.8rem;'>Make Admin</a>";
+                        } elseif ($row['id'] != $_SESSION['user']['id']) {
+                             echo "<a href='?revoke_admin={$row['id']}' class='btn-admin btn-warning' onclick='return confirm(\"Revoke Admin rights?\")' style='margin-right:5px; font-size:0.8rem;'>Revoke Admin</a>";
+                        }
+                        
+                        // Delete Button (Prevent self delete)
+                        if ($row['id'] != $_SESSION['user']['id']) {
+                            echo "<a href='?delete={$row['id']}' class='btn-admin btn-danger' onclick='return confirm(\"Delete this user?\")'>Delete</a>";
+                        } else {
+                            echo "<span style='color:#ccc;'>Rank Locked</span>";
+                        }
                         echo "</td>";
                         echo "</tr>";
                     }

@@ -8,3 +8,27 @@ Hi gajanan,
 Thank you for signing up with Ride-ease. We are excited to have you on board!
 --------------------------------------------------
 
+--------------------------------------------------
+Time: 2026-01-04 10:57:12
+To: user@gmail.com
+Subject: Welcome to Ride-ease!
+Message:
+Hi user,
+
+Thank you for signing up with Ride-ease. We are excited to have you on board!
+--------------------------------------------------
+
+--------------------------------------------------
+Time: 2026-01-04 11:12:16
+To: user@gmail.com
+Subject: Booking Confirmation #1
+Message:
+Booking Confirmed!
+Vehicle: Bajaj Pulsar 125
+Location: Pickup: Airport Station | Drop: Nanded
+Dates: 2026-01-04 to 2026-01-12
+Total: ₹5592
+
+Ride-ease.
+--------------------------------------------------
+

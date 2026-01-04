@@ -16,10 +16,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_vehicle'])) {
     $name = $_POST['name'];
     $category = $_POST['category'];
     $price = $_POST['price'];
-    $image = 'assets/img/' . $_POST['image']; // Simple handling for now
+    
+    // Image Upload Logic
+    $imagePath = 'assets/img/default.jpg'; // Fallback
+    if (isset($_FILES['image']) && $_FILES['image']['error'] === 0) {
+        $allowed = ['jpg', 'jpeg', 'png', 'webp', 'avif'];
+        $filename = $_FILES['image']['name'];
+        $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+        
+        if (in_array($ext, $allowed)) {
+            $newFilename = uniqid('vehicle_') . '.' . $ext;
+            $uploadDir = '../../assets/img/';
+            if (!is_dir($uploadDir)) mkdir($uploadDir, 0755, true);
+            
+            if (move_uploaded_file($_FILES['image']['tmp_name'], $uploadDir . $newFilename)) {
+                $imagePath = 'assets/img/' . $newFilename;
+            } else {
+                $error = "Failed to upload image.";
+            }
+        } else {
+            $error = "Invalid file type. Allowed: jpg, jpeg, png, webp.";
+        }
+    }
 
-    $stmt = $conn->prepare("INSERT INTO vehicles (name, category, price_per_day, image) VALUES (?, ?, ?, ?)");
-    $stmt->execute([$name, $category, $price, $image]);
+    if (!isset($error)) {
+        $stmt = $conn->prepare("INSERT INTO vehicles (name, category, price_per_day, image) VALUES (?, ?, ?, ?)");
+        $stmt->execute([$name, $category, $price, $imagePath]);
+        $success = "Vehicle added successfully!";
+    }
 }
 
 // Handle Delete
@@ -56,7 +80,10 @@ if (isset($_GET['delete'])) {
             <!-- Add Vehicle Form -->
             <div class="admin-table-container" style="flex: 1;">
                 <h3>Add New Vehicle</h3>
-                <form method="POST" action="" class="admin-form">
+                <?php if (isset($error)) echo "<p class='error' style='color:red'>$error</p>"; ?>
+                <?php if (isset($success)) echo "<p class='success' style='color:green'>$success</p>"; ?>
+                
+                <form method="POST" action="" class="admin-form" enctype="multipart/form-data">
                     <input type="hidden" name="csrf_token" value="<?php echo generateCSRFToken(); ?>">
                     <input type="text" name="name" placeholder="Vehicle Name" required>
                     <select name="category" required>
@@ -65,8 +92,9 @@ if (isset($_GET['delete'])) {
                         <option value="ebike">E-Bike</option>
                     </select>
                     <input type="number" step="0.01" name="price" placeholder="Price per Day" required>
-                    <input type="text" name="image" placeholder="Image Filename (e.g. bike.jpg)" required>
-                    <button type="submit" name="add_vehicle" class="btn-admin btn-primary" style="width: 100%;">Add Vehicle</button>
+                    <label style="display:block; margin: 10px 0 5px; font-size:0.9rem;">Vehicle Image:</label>
+                    <input type="file" name="image" accept="image/*" required style="padding: 5px;">
+                    <button type="submit" name="add_vehicle" class="btn-admin btn-primary" style="width: 100%; margin-top: 10px;">Add Vehicle</button>
                 </form>
             </div>
 
@@ -94,7 +122,10 @@ if (isset($_GET['delete'])) {
                             echo "<td>{$row['name']}</td>";
                             echo "<td>{$row['category']}</td>";
                             echo "<td>₹{$row['price_per_day']}</td>";
-                            echo "<td><a href='?delete={$row['id']}' class='btn-admin btn-danger' onclick='return confirm(\"Are you sure?\")'>Delete</a></td>";
+                            echo "<td>";
+                            echo "<a href='edit_vehicle.php?id={$row['id']}' class='btn-admin btn-info' style='margin-right:5px;'>Edit</a>";
+                            echo "<a href='?delete={$row['id']}' class='btn-admin btn-danger' onclick='return confirm(\"Are you sure?\")'>Delete</a>";
+                            echo "</td>";
                             echo "</tr>";
                         }
                         ?>

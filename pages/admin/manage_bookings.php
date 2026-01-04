@@ -46,7 +46,11 @@ if (isset($_GET['action']) && isset($_GET['id'])) {
                         <th>ID</th>
                         <th>User</th>
                         <th>Vehicle</th>
+                        <th>Vehicle</th>
                         <th>Dates</th>
+                        <th>Pickup</th>
+                        <th>Details</th>
+                        <th>Payment</th>
                         <th>Total</th>
                         <th>Status</th>
                         <th>Action</th>
@@ -76,6 +80,9 @@ if (isset($_GET['action']) && isset($_GET['id'])) {
                                 echo "<td>{$row['username']}</td>";
                                 echo "<td>{$row['vehicle_name']}</td>";
                                 echo "<td>{$row['start_date']} <br>to<br> {$row['end_date']}</td>";
+                                echo "<td>" . htmlspecialchars($row['pickup_location'] ?? '-') . "</td>";
+                                echo "<td><small>Lic: " . htmlspecialchars($row['license_no'] ?? '-') . "<br>Age: " . htmlspecialchars($row['driver_age'] ?? '-') . "</small></td>";
+                                echo "<td>" . htmlspecialchars($row['payment_method'] ?? '-') . "</td>";
                                 echo "<td>₹{$row['total_price']}</td>";
                                 echo "<td><span style='color: $statusColor; font-weight: bold;'>".ucfirst($row['status'])."</span></td>";
                                 echo "<td>";

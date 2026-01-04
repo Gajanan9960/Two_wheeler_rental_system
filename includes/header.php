@@ -24,7 +24,7 @@ if (!isset($active_page)) {
 <body>
     <header>
         <a href="<?php echo $base_path; ?>/index.php" class="logo">
-            <img src="<?php echo $base_path; ?>/assets/img/logo-search-grid-2x.png" alt="Ride-ease Logo">
+            <img src="<?php echo $base_path; ?>/assets/img/logo_modern.png" alt="Ride-ease Logo">
         </a>
         <ul class="navbar">
             <li><a href="<?php echo $base_path; ?>/index.php" class="<?php echo ($active_page == 'home') ? 'active' : ''; ?>">Home</a></li>
